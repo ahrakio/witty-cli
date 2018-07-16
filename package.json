@@ -1,0 +1,20 @@
+{
+  "name": "witty_cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm ./dist/* && tsc",
+    "run": "tsc && node ./dist/cli.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^2.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.2"
+  }
+}
