@@ -1,0 +1,19 @@
+import Request from "../Request";
+import Response from "../Response";
+import Controller from "./Controller";
+
+export default class ~name extends Controller {
+
+    constructor() {
+        super();
+    }
+/*
+    public handleSomeCase() {
+        // use this.request to get request info;
+        
+        // use this.response to edit the response back
+        
+    }
+ */
+
+}
