@@ -1,12 +1,18 @@
-#!/usr/bin/env node
-import program = require ('commander');
+import commander from 'commander';
 import {Generate} from  "./Commands/Generate"
-let command = new Generate();
 
+let command = new Generate();
+interface ExtendedOptions extends commander.CommandOptions {
+    isNew: any;
+}
+/*
+const commandInstance = new commander.Command('haver');
+const optionsInstance = new commander.Option('-a, --abc', 'shows abc');
+*/
 let i = 0;
 
 // generate command
-program
+commander
     .version('0.1.0')
     .command(command.name+" <"+ command.params[0] + "> <" + command.params[1]+">")
     .alias(command.alias)
@@ -17,5 +23,5 @@ program
     .action(command.handler);
 
 // main parse
-program.parse(process.argv);
+commander.parse(process.argv);
 
