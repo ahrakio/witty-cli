@@ -1,6 +1,6 @@
 import { IFileTemplate } from "./IFileTemplate";
 
-export default class ControllerTemplate implements IFileTemplate {
+export default class MiddlewareTemplate implements IFileTemplate {
     language: string;
     import: string[];
     extends: string;
@@ -12,8 +12,8 @@ export default class ControllerTemplate implements IFileTemplate {
         this.language = 'TS';
         this.import = [];
         this.implements = [];
-        this.extends = "Controller";
+        this.extends = "Middleware";
         this.constructor_params = [];
-        this.abstract_method = [];
+        this.abstract_method = ['handle'];
     }
 }
