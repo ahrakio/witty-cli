@@ -1,14 +1,11 @@
 import commander from 'commander';
 import {Generate} from  "./Commands/Generate"
 
-let command = new Generate();
+let command: ICommand = new Generate();
 interface ExtendedOptions extends commander.CommandOptions {
     isNew: any;
 }
-/*
-const commandInstance = new commander.Command('haver');
-const optionsInstance = new commander.Option('-a, --abc', 'shows abc');
-*/
+
 let i = 0;
 
 // generate command

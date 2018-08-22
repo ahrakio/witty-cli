@@ -1,6 +1,0 @@
-{
-  "import": [],
-  "extends": ["Controller"],
-  "constructor_params": [],
-  "abstract_method":[]
-}
