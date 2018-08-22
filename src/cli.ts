@@ -1,7 +1,7 @@
 import commander from 'commander';
-import {Generate} from  "./Commands/Generate"
+import {GenerateCommand} from  "./Commands/GenerateCommand"
 
-let command: ICommand = new Generate();
+let command: ICommand = new GenerateCommand();
 interface ExtendedOptions extends commander.CommandOptions {
     isNew: any;
 }

@@ -82,21 +82,34 @@ function getTemplate(type: string) : IFileTemplate|null {
     } else return null;
 }
 
-export class Generate implements ICommand {
-    name: string = 'generate';
-    alias: string = 'gn';
-    params: string[] = ['type', 'filename'];
-    description: string = 'generate new component from given type';
-    options: IOption[] = [
-        { name: "path",
-            char: "p",
-            params: ["path"],
-            description:"set file location"
+export class GenerateCommand implements ICommand {
+    name: string;
+    alias: string;
+    params: string[];
+    description: string;
+    options: IOption[];
 
-        }, {
-        name: "drop", char : 'd', params: [], description: "drop comments"
-        }
-    ];
+    constructor() {
+        this.name = 'generate';
+        this.alias = 'gn';
+        this.params =  ['type', 'filename'];
+        this.description = 'generate new component from given type';
+        this.options = [
+            { 
+                name: "path",
+                char: "p",
+                params: ["path"],
+                description:"set file location"
+            }, 
+            {
+                name: "drop",
+                char : 'd',
+                params: [], 
+                description: "drop comments"
+            }
+        ];  
+    }
+
     handler: (...args: any[]) => void = function (type:string , filename:string, options:any) {
         if ((-1 === Object.keys(CLIDefaultValues.innerPaths).indexOf(type))) {
             console.log('invalid type: ' + type);

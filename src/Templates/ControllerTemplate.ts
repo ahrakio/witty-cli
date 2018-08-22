@@ -1,9 +1,17 @@
-import {IFileTemplate} from "./IFileTemplate";
+import { IFileTemplate } from "./IFileTemplate";
 
-export default  class ControllerTemplate implements IFileTemplate {
-  language ='TS';
-  import = ["b",'c'];
-  extends = ["Controller, a"];
-  constructor_params= [];
-  abstract_method= [];
+export class ControllerTemplate implements IFileTemplate {
+    language: string;
+    import: string[];
+    extends: string[];
+    constructor_params: string[];
+    abstract_method: string[];
+    
+    constructor() {
+        this.language = 'TS';
+        this.import = ["b",'c'];
+        this.extends = ["Controller, a"];
+        this.constructor_params = [];
+        this.abstract_method = [];
+    }
 }
