@@ -159,6 +159,6 @@ export class GenerateCommand implements ICommand {
         touchDir(path);
         let className = (options && options.strict) ? filename : filename+type[0].toUpperCase() + type.slice(1).toLowerCase();
         writeTSFile(path, className, type, options ? (!!options.drop) : false);
-    };
+    }
 
 }
