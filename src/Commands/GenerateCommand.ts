@@ -35,7 +35,7 @@ function  writeTSFile(path:string, file_name:string, type:string, to_drop:boolea
             needToImport.push(template.extends);
         }
 
-        let imports :string = `import {${alignArray(needToImport)}} from \'ahrakio\';\n`;
+        let imports :string = `import {${needToImport.join(', ')}} from \'ahrakio\';\n`;
         console.log(imports);
         data.write(imports);
         let definition : string = `export default class ${file_name} `;
@@ -43,18 +43,30 @@ function  writeTSFile(path:string, file_name:string, type:string, to_drop:boolea
             definition += `extends ${template.extends} `
         }
         if (template.implements.length > 0) {
-            definition += `implements ${alignArray(template.implements)} `;
+            definition += `implements ${template.implements.join(', ')} `;
         }
         definition += '{\n';
         console.log(definition);
         data.write(definition);
-        let constructorFn :string = `\tconstructor(${alignArray(template.constructor_params)}) {\n`;
+
+        let constructorParams :string []= template.constructor_params.map(param => `${param.name} :${param.type}`);
+        console.log(constructorParams);
+        let constructorFn :string = `\tconstructor(${constructorParams.join(', ')}) {\n`;
         if (template.extends) {
-            constructorFn += `\t\tsuper(${alignArray(template.constructor_params)});\n`;
+            constructorFn += `\t\tsuper(${template.constructor_params.map(param => param.name).join(', ')});\n`;
         }
         constructorFn += '\t}\n';
         console.log(constructorFn);
-        data.write(constructorFn + '}');
+        data.write(constructorFn );
+
+        let abstract_methods : string[]= template.abstract_method
+            .map(method => `\t${method.name}(${method.params
+                .map(param=>`param => \`${param.name} :${param.type}`).join(', ')}) : ${method.returns} {\n
+                    \t\treturn \/\/ ${method.returns}\n\t}`);
+        console.log(abstract_methods.join("\n"));
+        data.write(abstract_methods +'\n}');
+        //data.close();
+
 
 
     } else {
@@ -99,11 +111,6 @@ function  writeTSFile(path:string, file_name:string, type:string, to_drop:boolea
             console.log(file_name + ' is written!');
         });*/
 }
-
-function  alignArray(arr: string []) : string {
-    return JSON.stringify(arr).replace(/["'\[\]]/gi, "").replace(/,/gi,', ');
-}
-
 
 
 export class GenerateCommand implements ICommand {
