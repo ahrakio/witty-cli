@@ -29,7 +29,7 @@ commander
     .alias(command2.Alias)
     .description(command2.Description)
     .option('-' + command2.Options[i].char +', --' + command2.Options[i].name+' <' +
-                command2.Options[i].params[0]+'>', 'default path')
+                command2.Options[i].params[0]+'>', command2.Options[i].description)
     .action(command2.handler());
 // main parse
 commander.parse(process.argv);

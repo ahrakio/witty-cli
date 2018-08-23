@@ -8,7 +8,7 @@ export class BuildCommand extends CommandAbstract {
         
         this.name = 'build';
         this.alias = 'b';
-        this.params =  ['type', 'filename'];
+        this.params =  [];
         this.description = 'Build the project for production';
         this.options = [
             { 
@@ -20,7 +20,7 @@ export class BuildCommand extends CommandAbstract {
         ];  
     }
 
-    public handle(command: Command): void {
+    protected handle(command: Command): void {
         console.log(command);
         console.log(this);
     }
