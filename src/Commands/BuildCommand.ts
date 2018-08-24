@@ -32,9 +32,13 @@ export class BuildCommand extends CommandAbstract {
         ];  
     }
 
-    protected handle(command: Command): void {
+    protected handle(commands: Command[]): void {
+        let cwd = process.cwd();
+        let entryPath = path.resolve(cwd, '../witty-project/index.ts');
+        let outputPath = path.resolve(cwd, '../witty-project', 'dist');
+
         let config = {
-            entry: path.resolve(__dirname, '../../../witty-project/index.ts'),
+            entry: entryPath,
             module: {
                 rules: [
                     {
@@ -49,7 +53,7 @@ export class BuildCommand extends CommandAbstract {
             },
             output: {
                 filename: 'index.js',
-                path: path.resolve(__dirname, '../../../witty-project/dist'),
+                path: outputPath,
             },
             target: 'node',
             mode: 'production',
