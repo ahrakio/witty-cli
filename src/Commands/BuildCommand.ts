@@ -1,6 +1,18 @@
-
 import { Command } from 'commander';
 import { CommandAbstract } from './CommandAbstract';
+import * as path from 'path';
+import webpack from 'webpack';
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+// Clean configurations
+const clean_paths = [
+    path.resolve(__dirname, '../../../witty-project/dist')
+];
+
+const clean_options = {
+    watch: true
+};
 
 export class BuildCommand extends CommandAbstract {
     constructor() {
@@ -21,7 +33,47 @@ export class BuildCommand extends CommandAbstract {
     }
 
     protected handle(command: Command): void {
-        console.log(command);
-        console.log(this);
+        let config = {
+            entry: path.resolve(__dirname, '../../../witty-project/index.ts'),
+            module: {
+                rules: [
+                    {
+                        test: /\.ts$/,
+                        use: 'ts-loader',
+                        exclude: /node_modules/
+                    }
+                ]
+            },
+            resolve: {
+                extensions: ['.ts', '.js']
+            },
+            output: {
+                filename: 'index.js',
+                path: path.resolve(__dirname, '../../../witty-project/dist'),
+            },
+            target: 'node',
+            mode: 'production',
+            plugins: [
+                new CleanWebpackPlugin(clean_paths, clean_options),
+                new UglifyJsPlugin(),
+            ]
+        };
+
+        const compiler = webpack(config);
+        compiler.run((a, stats) => {
+            const info = stats.toJson();
+            if (stats.hasErrors()) {
+                console.error(info.errors);
+            }
+
+            if (stats.hasWarnings()) {
+                console.warn(info.warnings);
+            }
+
+            console.log(stats.toString({
+                colors: true
+            }));
+        });
     }
 }
+
