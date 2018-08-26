@@ -33,7 +33,9 @@ export class BuildCommand extends CommandAbstract {
     }
 
     protected handle(commands: Command[]): void {
+        process.chdir(path.resolve(__dirname, '../..'));
         let cwd = process.cwd();
+
         let entryPath = path.resolve(cwd, '../witty-project/index.ts');
         let outputPath = path.resolve(cwd, '../witty-project', 'dist');
 
