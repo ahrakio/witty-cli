@@ -33,10 +33,11 @@ export class ServeCommand extends CommandAbstract {
         ];  
     }
 
-    protected handle(commands: Command[]): void {
-        console.log(commands);
-        let child: any = null;
+    protected handle(command: Command): void {
+        process.chdir(path.resolve(__dirname, '../..'));
         let cwd = process.cwd();
+
+        let child: any = null;
         let entryPath = path.resolve(cwd, '../witty-project/index.ts');
         let outputPath = path.resolve(cwd, 'serve');
 
@@ -78,10 +79,10 @@ export class ServeCommand extends CommandAbstract {
                             outputPath + '/index.js'
                         ];
         
-                        if (commands[0].port !== undefined) {
-                            args.push(commands[0].port);
+                        if (command.port !== undefined) {
+                            args.push(command.port);
                         }
-        
+                
                         child = spawn('node', args);
                     }
                 })
