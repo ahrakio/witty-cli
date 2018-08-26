@@ -13,6 +13,7 @@ interface ExtendedOptions extends commander.CommandOptions {
 commander.version('0.1.0');
 
 for (let command_name in commands) {
+    
 
     let command: CommandAbstract = new (commands[command_name])();
     let default_params: string = " " + command.Params.map(param => `<${param}>`).join(' ');

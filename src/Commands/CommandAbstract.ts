@@ -27,9 +27,9 @@ export abstract class CommandAbstract {
 
     protected abstract handle(...args: any[]): void;
 
-    public handler() : (...args: any[]) =>void {
+    public handler(): (...args: any[]) => void {
         return (...args: any[]) => {
-            this.handle(args);
+            this.handle(...args);
         };
     }
 }
