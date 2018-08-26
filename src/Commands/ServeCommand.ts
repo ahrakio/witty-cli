@@ -34,6 +34,7 @@ export class ServeCommand extends CommandAbstract {
     }
 
     protected handle(commands: Command[]): void {
+        console.log(commands);
         let child: any = null;
         let cwd = process.cwd();
         let entryPath = path.resolve(cwd, '../witty-project/index.ts');

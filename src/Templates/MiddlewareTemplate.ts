@@ -1,4 +1,4 @@
-import { IFileTemplate } from "./IFileTemplate";
+import {IFileTemplate} from "./IFileTemplate";
 import {IParamTemplate} from "./IParamTemplate";
 import {IMethodTemplate} from "./IMethodTemplate";
 
