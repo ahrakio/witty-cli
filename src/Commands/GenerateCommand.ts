@@ -57,13 +57,13 @@ export  class GenerateCommand extends CommandAbstract {
                 name: "path",
                 char: "p",
                 params: ["path"],
-                description:"set file location"
+                description:"set file location."
             }, 
             {
-                name: "drop",
-                char : 'd',
+                name: "strict",
+                char : 's',
                 params: [], 
-                description: "drop comments"
+                description: "don't concat type name to class name."
             }
         ];  
     }
@@ -92,14 +92,12 @@ export  class GenerateCommand extends CommandAbstract {
             needToImport = needToImport.concat(template.implements.filter(function (item) {
                 return needToImport.indexOf(item) === -1;
             }));
-            console.log(needToImport);
 
             if (template.extends && !(template.extends in needToImport)) {
                 needToImport.push(template.extends);
             }
 
             let imports: string = `import {${needToImport.join(', ')}} from \'ahrakio\';\n`;
-            console.log(imports);
             data.write(imports);
             let definition: string = `export default class ${file_name} `;
             if (template.extends) {
@@ -109,24 +107,23 @@ export  class GenerateCommand extends CommandAbstract {
                 definition += `implements ${template.implements.join(', ')} `;
             }
             definition += '{\n';
-            console.log(definition);
             data.write(definition);
 
             let constructorParams: string [] = template.constructor_params.map(param => `${param.name} :${param.type}`);
-            console.log(constructorParams);
             let constructorFn: string = `\tconstructor(${constructorParams.join(', ')}) {\n`;
+
             if (template.extends) {
                 constructorFn += `\t\tsuper(${template.constructor_params.map(param => param.name).join(', ')});\n`;
             }
             constructorFn += '\t}\n';
-            console.log(constructorFn);
+
             data.write(constructorFn);
 
             let abstract_methods: string[] = template.abstract_method
                 .map(method => `\t${method.name}(${method.params
                     .map(param => `param => \`${param.name} :${param.type}`).join(', ')}) : ${method.returns} {\n
                     \t\treturn \/\/ ${method.returns}\n\t}`);
-            console.log(abstract_methods.join("\n"));
+
             data.write(abstract_methods + '\n}');
             //data.close();
 
@@ -136,24 +133,33 @@ export  class GenerateCommand extends CommandAbstract {
             return;
         }
     }
+    private getTypeList () : string[]{
+         return Object.keys(templates);
+    };
+
+     private getPathFor(type:string) :string|null {
+         if (!(type in CLIDefaultValues.innerPaths)) return null;
+         return CLIDefaultValues.innerPaths[type];
+     }
 
 
 
     public handle (type:string , filename:string, options:any) :void {
-        if ((-1 === Object.keys(CLIDefaultValues.innerPaths).indexOf(type))) {
-            console.log('invalid type: ' + type);
-            console.log('valid types are: ' + JSON.stringify(Object.keys(CLIDefaultValues.innerPaths)));
-            return;
-        }
-
-
         if (!this.checkTemplate(type)) {
-            console.log('failed to find template for '+ type);
+            console.log('invalid type: ' + type);
+            console.log('valid types are: ' + JSON.stringify(this.getTypeList()));
             return;
         }
-        let path:string = (options && options.path) ? options.path : CLIDefaultValues.innerPaths[type];
+
+        if (this.getPathFor(type) === null && (!options || !options.path)) {
+            console.log('failed to find default path for '+ type);
+            return;
+        }
+        let path:string = (options && options.path) ? options.path : this.getPathFor(type);
         touchDir(path);
         let className = (options && options.strict) ? filename : filename+type[0].toUpperCase() + type.slice(1).toLowerCase();
+
+
         this.writeTSFile(path, className, type, options ? (!!options.drop) : false);
     }
 
