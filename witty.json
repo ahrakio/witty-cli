@@ -1,8 +1,0 @@
-{
-    "defaultPaths": {
-      "api": "./dist",
-      "controller": "./dist/Controllers",
-      "middleware": "./dist/Middlewares"
-    },
-    "metadata": {}
-  }
