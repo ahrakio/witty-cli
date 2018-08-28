@@ -1,8 +1,5 @@
 import commander, { Command } from 'commander';
-import {GenerateCommand} from  "./Commands/GenerateCommand"
-import { BuildCommand } from './Commands/BuildCommand';
 import { CommandAbstract } from './Commands/CommandAbstract';
-import { ServeCommand } from './Commands/ServeCommand';
 import * as commands from "./Commands/CLICommands";
 
 
