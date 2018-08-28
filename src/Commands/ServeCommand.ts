@@ -3,8 +3,12 @@ import { CommandAbstract } from './CommandAbstract';
 import * as path from 'path';
 import webpack from 'webpack';
 const spawn = require('child_process').spawn;
+
+// Webpack plugins
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const WebpackBar = require('webpackbar');
+
 
 // Clean configurations
 const clean_paths = [
@@ -61,10 +65,6 @@ export class ServeCommand extends CommandAbstract {
             },
             target: 'node',
             mode: 'development',
-            watchOptions: {
-                aggregateTimeout: 1000,
-                poll: 1000
-            },
             plugins: [
                 new CleanWebpackPlugin(clean_paths, clean_options),
                 new UglifyJsPlugin(),
@@ -85,13 +85,18 @@ export class ServeCommand extends CommandAbstract {
                 
                         child = spawn('node', args);
                     }
+                }),
+                new WebpackBar({
+                    name: 'Witty'
                 })
             ]
         };
 
         const compiler = webpack(config);
         compiler.watch({
-            poll: 300
+            aggregateTimeout: 1000,
+            poll: 1000,
+            ignored: ['node_modules']
         }, (a, stats) => {
             const info = stats.toJson();
             if (stats.hasErrors()) {
@@ -103,7 +108,9 @@ export class ServeCommand extends CommandAbstract {
             }
 
             console.log(stats.toString({
-                colors: true
+                colors: true,
+                modules: false,
+                version: false
             }));
         });
     }

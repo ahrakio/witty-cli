@@ -2,8 +2,12 @@ import { Command } from 'commander';
 import { CommandAbstract } from './CommandAbstract';
 import * as path from 'path';
 import webpack from 'webpack';
+
+// Webpack plugins
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const WebpackBar = require('webpackbar');
+
 
 // Clean configurations
 const clean_paths = [
@@ -62,6 +66,9 @@ export class BuildCommand extends CommandAbstract {
             plugins: [
                 new CleanWebpackPlugin(clean_paths, clean_options),
                 new UglifyJsPlugin(),
+                new WebpackBar({
+                    name: 'Witty'
+                })
             ]
         };
 
@@ -77,7 +84,9 @@ export class BuildCommand extends CommandAbstract {
             }
 
             console.log(stats.toString({
-                colors: true
+                colors: true,
+                modules: false,
+                version: false
             }));
         });
     }
