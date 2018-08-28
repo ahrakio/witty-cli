@@ -1,9 +1,10 @@
-import {WriteStream, createWriteStream} from "fs";
-import {touchDir} from '../Common/FileSystem';
+import {WriteStream, createWriteStream, readFileSync} from "fs";
+import {chdir} from 'process';
+import {touchDir, readJsonFile, findFile} from '../Common/FileSystem';
 import  * as templates from  "../Templates/AllFileTemplates"
 import {IFileTemplate} from "../Templates/IFileTemplate";
 import {CommandAbstract} from "./CommandAbstract";
-import witty from "../../witty.json";
+const json_file = "witty.json";
 
 /*
 
@@ -45,7 +46,7 @@ import witty from "../../witty.json";
 
 
 
-export  class GenerateCommand extends CommandAbstract {
+export class GenerateCommand extends CommandAbstract {
      constructor() {
         super();
         this.name = 'generate';
@@ -77,7 +78,32 @@ export  class GenerateCommand extends CommandAbstract {
         } else return null;
     }
 
-    private writeTSFile(path:string, file_name:string, type:string, to_drop:boolean) :void {
+    private editApp(app_path:string, type:string, new_class:string, new_path:string):void {
+        if (!app_path) {
+            console.log('inlaid path to App.ts');
+            return;
+        }
+        let delim = app_path[app_path.length-1] === '\\' ? '' : '\\';
+        try {
+            let old:string = readFileSync(`${app_path}${delim}App.ts`,'ascii');
+            let regex:RegExp = new RegExp(`${type}s\\s*:\\s*\\[`,'i');
+            let found = old.match(regex);
+            let index:number = found.index + found[0].length;
+            let sperator = old.indexOf(']', index) < old.indexOf(',', index) ? '' :  ',' ;
+            let new_app = `import { ${new_class} } from "${new_path}/${new_class}";\n${old.slice(0, index)}\n\t\t${new_class}${sperator}${old.slice(index)}`;
+            let data: WriteStream = createWriteStream(`${app_path}${delim}App.ts`);
+            data.write(new_app);
+            console.log('App.ts rewrite!');
+
+        } catch (err){
+            console.log('failed to rewrite App.ts');
+            console.log(err);
+            return;
+        }
+     }
+
+
+    private writeTSFile(path:string, file_name:string, type:string) :boolean {
         console.log('writing to ' + path + '/' + file_name + '.ts');
         let data: WriteStream = createWriteStream(path + '/' + file_name + '.ts');
 
@@ -85,7 +111,7 @@ export  class GenerateCommand extends CommandAbstract {
         if (template !== null) {
             if (template.language !== 'TS') {
                 console.log('Generate implement currently just for TypeScript...');
-                return;
+                return false;
             }
             // Intersection all classes that need to be import
             let needToImport: string [] = template.import;
@@ -99,7 +125,7 @@ export  class GenerateCommand extends CommandAbstract {
 
             let imports: string = `import {${needToImport.join(', ')}} from \'ahrakio\';\n`;
             data.write(imports);
-            let definition: string = `export default class ${file_name} `;
+            let definition: string = `export class ${file_name} `;
             if (template.extends) {
                 definition += `extends ${template.extends} `
             }
@@ -126,41 +152,58 @@ export  class GenerateCommand extends CommandAbstract {
 
             data.write(abstract_methods + '\n}');
             //data.close();
-
+            return true;
 
         } else {
             console.log('failed to get ' + type + " template.");
-            return;
+            return false;
         }
     }
+
     private getTypeList () : string[]{
          return Object.keys(templates);
     };
 
-     private getPathFor(type:string) :string|null {
-         if (!(type in witty.defaultPaths)) return null;
-         return witty.defaultPaths[type];
-     }
-
-
 
     public handle (type:string , filename:string, options:any) :void {
+        // check type existence
         if (!this.checkTemplate(type)) {
             console.log('invalid type: ' + type);
             console.log('valid types are: ' + JSON.stringify(this.getTypeList()));
             return;
         }
-
-        if (this.getPathFor(type) === null && (!options || !options.path)) {
-            console.log('failed to find default path for '+ type);
+        // read json data
+        let project_path:string|null = findFile(json_file);
+        if (project_path === null) {
+            console.log('failed to find '+ json_file);
             return;
         }
-        let path:string = (options && options.path) ? options.path : this.getPathFor(type);
+        chdir(project_path);
+
+        let json_obj = readJsonFile(`./${json_file}`);
+        if (json_obj === null || !("defaultPaths" in json_obj)) {
+            console.log(`failed to parse ${json_file}`);
+            return;
+        }
+        // get file path
+        let path:string;
+        if (options && options.path) {
+            path = options.path
+        } else  {
+            if (!(type in json_obj["defaultPaths"])) {
+                console.log(`failed to find path in ${json_file}`);
+                return;
+            }
+            path = json_obj["defaultPaths"][type];
+        }
+        // build the path if isn't exist
         touchDir(path);
+        // define filename
         let className = (options && options.strict) ? filename : filename+type[0].toUpperCase() + type.slice(1).toLowerCase();
-
-
-        this.writeTSFile(path, className, type, options ? (!!options.drop) : false);
+        // write file from template
+        if(this.writeTSFile(path, className, type)){
+            this.editApp(json_obj["defaultPaths"]["app"], type, className, path);
+        }
     }
 
 }
