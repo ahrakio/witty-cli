@@ -1,9 +1,9 @@
 import {WriteStream, createWriteStream} from "fs";
 import {touchDir} from '../Common/FileSystem';
-import {CLIDefaultValues} from "../CLIDefaultValues";
 import  * as templates from  "../Templates/AllFileTemplates"
 import {IFileTemplate} from "../Templates/IFileTemplate";
 import {CommandAbstract} from "./CommandAbstract";
+import witty from "../../witty.json";
 
 /*
 
@@ -138,8 +138,8 @@ export  class GenerateCommand extends CommandAbstract {
     };
 
      private getPathFor(type:string) :string|null {
-         if (!(type in CLIDefaultValues.innerPaths)) return null;
-         return CLIDefaultValues.innerPaths[type];
+         if (!(type in witty.defaultPaths)) return null;
+         return witty.defaultPaths[type];
      }
 
 
