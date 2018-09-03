@@ -1,21 +1,10 @@
 import {IFileTemplate} from "./IFileTemplate";
-import {IParamTemplate} from "./IParamTemplate";
-import {IMethodTemplate} from "./IMethodTemplate";
+import {AbstractClassTemplate} from "./AbstractClassTemplate";
 
-export default class MiddlewareTemplate implements IFileTemplate {
-    language: string;
-    import: string[];
-    extends: string;
-    implements: string[];
-    constructor_params: IParamTemplate[];
-    abstract_method: IMethodTemplate[];
-    
+export default class MiddlewareTemplate extends AbstractClassTemplate implements IFileTemplate {
     constructor() {
-        this.language = 'TS';
-        this.import = [];
-        this.implements = [];
-        this.extends = "Middleware";
-        this.constructor_params = [];
-        this.abstract_method = [{name:'handle', params: [], returns: 'boolean|Promise<boolean>'}];
+        super();
+        this.class.extends = "Middleware";
+        this.methods = [{name:'handle', params: [], returns: 'boolean|Promise<boolean>'}];
     }
 }

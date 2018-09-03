@@ -1,11 +1,10 @@
 import {IMethodTemplate} from "./IMethodTemplate";
-import  {IParamTemplate} from "./IParamTemplate";
+import {IClassTemplate} from "./IClassTemplate";
 
 export interface IFileTemplate {
     language: string;
     import: string[];
-    implements: string[];
-    extends?: string;
-    constructor_params : IParamTemplate[];
-    abstract_method :IMethodTemplate[];
+    global_code: string;
+    class?: IClassTemplate;
+    methods :IMethodTemplate[];
 }

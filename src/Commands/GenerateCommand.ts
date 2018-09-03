@@ -4,47 +4,9 @@ import {touchDir, readJsonFile, findFile} from '../Common/FileSystem';
 import  * as templates from  "../Templates/AllFileTemplates"
 import {IFileTemplate} from "../Templates/IFileTemplate";
 import {CommandAbstract} from "./CommandAbstract";
+import {TemplateGenerator} from "../Templates/TemplateGenerator";
+
 const json_file = "witty.json";
-
-/*
-
-
- readStream
-     .on('data', function(chunk) {
-         // set name
-         chunk = chunk.toString().replace(/~name/gi, file_name);
-         if (to_drop) {
-             // drop comments
-             if (! skip_block_comment) {
-                 let slice_start = chunk.indexOf('/*');
-                 if (slice_start !== -1) {
-                     skip_block_comment = true;
-                     //let slice_end = chunk.indexOf('*//*') ;
-                        if (slice_end !== -1) {
-                            chunk = chunk.slice(0,slice_start) + chunk.slice(slice_end +2);
-                            skip_block_comment =false;
-                        } else {
-                            chunk = chunk.slice(0, slice_start);
-                        }
-                    }
-                } else {
-                    let slice_end = chunk.indexOf('*//*');
-                    if (slice_end !== -1) {
-                        chunk = chunk.slice(slice_end + 2);
-                        skip_block_comment =false;
-                    } else {
-                        chunk = '';
-                    }
-                }
-            }
-            data.write(chunk);
-        })
-        .on('end', function() {
-            data.close();
-            console.log(file_name + ' is written!');
-        });*/
-
-
 
 export class GenerateCommand extends CommandAbstract {
      constructor() {
@@ -66,8 +28,10 @@ export class GenerateCommand extends CommandAbstract {
                 params: [], 
                 description: "don't concat type name to class name."
             }
-        ];  
+        ];
+
     }
+
     private checkTemplate(type: string) : boolean{
         return type in templates;
     }
@@ -102,63 +66,6 @@ export class GenerateCommand extends CommandAbstract {
         }
      }
 
-
-    private writeTSFile(path:string, file_name:string, type:string) :boolean {
-        console.log('writing to ' + path + '/' + file_name + '.ts');
-        let data: WriteStream = createWriteStream(path + '/' + file_name + '.ts');
-
-        let template: IFileTemplate | null = this.getTemplate(type);
-        if (template !== null) {
-            if (template.language !== 'TS') {
-                console.log('Generate implement currently just for TypeScript...');
-                return false;
-            }
-            // Intersection all classes that need to be import
-            let needToImport: string [] = template.import;
-            needToImport = needToImport.concat(template.implements.filter(function (item) {
-                return needToImport.indexOf(item) === -1;
-            }));
-
-            if (template.extends && !(template.extends in needToImport)) {
-                needToImport.push(template.extends);
-            }
-
-            let imports: string = `import {${needToImport.join(', ')}} from \'ahrakio\';\n`;
-            data.write(imports);
-            let definition: string = `export class ${file_name} `;
-            if (template.extends) {
-                definition += `extends ${template.extends} `
-            }
-            if (template.implements.length > 0) {
-                definition += `implements ${template.implements.join(', ')} `;
-            }
-            definition += '{\n';
-            data.write(definition);
-
-            let constructorParams: string [] = template.constructor_params.map(param => `${param.name} :${param.type}`);
-            let constructorFn: string = `\tconstructor(${constructorParams.join(', ')}) {\n`;
-
-            if (template.extends) {
-                constructorFn += `\t\tsuper(${template.constructor_params.map(param => param.name).join(', ')});\n`;
-            }
-            constructorFn += '\t}\n';
-
-            data.write(constructorFn);
-
-            let abstract_methods: string[] = template.abstract_method
-                .map(method => `\t${method.name}(${method.params
-                    .map(param => `param => \`${param.name} :${param.type}`).join(', ')}) : ${method.returns} {\n
-                    \t\treturn \/\/ ${method.returns}\n\t}`);
-
-            data.write(abstract_methods + '\n}');
-            //data.close();
-            return true;
-
-        } else {
-            console.log('failed to get ' + type + " template.");
-            return false;
-        }
-    }
 
     private getTypeList () : string[]{
          return Object.keys(templates);
@@ -201,8 +108,14 @@ export class GenerateCommand extends CommandAbstract {
         // define filename
         let className = (options && options.strict) ? filename : filename+type[0].toUpperCase() + type.slice(1).toLowerCase();
         // write file from template
-        if(this.writeTSFile(path, className, type)){
-            this.editApp(json_obj["defaultPaths"]["app"], type, className, path);
+        let template: IFileTemplate | null = this.getTemplate(type);
+        let generator = new TemplateGenerator();
+        if (template !== null) {
+            if (generator.writeTSFileFromTemplate(path, className, template)) {
+                this.editApp(json_obj["defaultPaths"]["app"], type, className, path);
+            }
+        } else {
+            console.log('failed to get ' + type + " template.");
         }
     }
 

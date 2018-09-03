@@ -1,4 +1,4 @@
-import {existsSync, mkdirSync, readFileSync, realpathSync} from "fs";
+import {existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync} from "fs";
 
 export function touchDir(path:string) :void {
     if (existsSync(path)) return;
@@ -19,6 +19,15 @@ export function readJsonFile (path:string) : object {
            return JSON.parse(readFileSync(path, "ascii"));
        } catch {
         return null;
+    }
+}
+
+export  function writeJsonFile (obj: object, path:string='./') : boolean {
+    try {
+        writeFileSync(path, JSON.stringify(obj).replace(',', ',\n\t').replace('{', '{\n\t') , 'ascii');
+        return true;
+    }catch  {
+        return false;
     }
 }
 
