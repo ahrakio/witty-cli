@@ -24,7 +24,7 @@ export function readJsonFile (path:string) : object {
 
 export  function writeJsonFile (obj: object, path:string='./') : boolean {
     try {
-        writeFileSync(path, JSON.stringify(obj).replace(',', ',\n\t').replace('{', '{\n\t') , 'ascii');
+        writeFileSync(path, JSON.stringify(obj,null, "\t"), 'ascii');
         return true;
     }catch  {
         return false;

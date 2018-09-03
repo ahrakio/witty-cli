@@ -31,10 +31,10 @@ export class TemplateGenerator {
         }
         if (needToImport.length > 0) {
             let imports: string = `import {${needToImport.join(', ')}} from \'${npm_name}\';\n`;
-            data.write(imports);
+            data.write(imports + '\n');
         }
         if (template.global_code.length > 0) {
-            data.write(template.global_code);
+            data.write(template.global_code + '\n');
         }
         if (template.class) {
             let class_data = template.class;
