@@ -1,5 +1,6 @@
 import {WriteStream, createWriteStream, readFileSync} from "fs";
 import {chdir} from 'process';
+import {sep} from 'path';
 import {touchDir, readJsonFile, findFile} from '../Common/FileSystem';
 import  * as templates from  "../Templates/AllFileTemplates"
 import {IFileTemplate} from "../Templates/IFileTemplate";
@@ -47,15 +48,16 @@ export class GenerateCommand extends CommandAbstract {
             console.log('inlaid path to App.ts');
             return;
         }
-        let delim = app_path[app_path.length-1] === '\\' ? '' : '\\';
+        let delim = app_path[app_path.length-1] === sep ? '' : sep;
         try {
-            let old:string = readFileSync(`${app_path}${delim}App.ts`,'ascii');
+            let app_path_final = `${app_path}${delim}App.ts`;
+            let old:string = readFileSync(app_path_final,'ascii');
             let regex:RegExp = new RegExp(`${type}s[\'\"]\\s*:\\s*\\[`,'i');
             let found = old.match(regex);
             let index:number = found.index + found[0].length;
             let sperator = old.indexOf(']', index) < old.indexOf(',', index) ? '' :  ',' ;
             let new_app = `import { ${new_class} } from "${new_path}/${new_class}";\n${old.slice(0, index)}\n\t\t${new_class}${sperator}${old.slice(index)}`;
-            let data: WriteStream = createWriteStream(`${app_path}${delim}App.ts`);
+            let data: WriteStream = createWriteStream(app_path_final);
             data.write(new_app);
             console.log('App.ts rewrite!');
 
@@ -87,7 +89,7 @@ export class GenerateCommand extends CommandAbstract {
         }
         chdir(project_path);
 
-        let json_obj = readJsonFile(`./${json_file}`);
+        let json_obj = readJsonFile(`${process.cwd()}${sep}${json_file}`);
         if (json_obj === null || !("defaultPaths" in json_obj)) {
             console.log(`failed to parse ${json_file}`);
             return;
