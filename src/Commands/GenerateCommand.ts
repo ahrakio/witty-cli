@@ -50,7 +50,7 @@ export class GenerateCommand extends CommandAbstract {
         let delim = app_path[app_path.length-1] === '\\' ? '' : '\\';
         try {
             let old:string = readFileSync(`${app_path}${delim}App.ts`,'ascii');
-            let regex:RegExp = new RegExp(`${type}s\\s*:\\s*\\[`,'i');
+            let regex:RegExp = new RegExp(`${type}s[\'\"]\\s*:\\s*\\[`,'i');
             let found = old.match(regex);
             let index:number = found.index + found[0].length;
             let sperator = old.indexOf(']', index) < old.indexOf(',', index) ? '' :  ',' ;

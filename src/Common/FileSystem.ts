@@ -35,7 +35,7 @@ export  function writeJsonFile (obj: object, path:string='./') : boolean {
  * will return that path of file or null if not found. (search only recursive up)
   */
 export function findFile (name:string) :string | null {
-    let candidate = realpathSync(`.\\`);
+    let candidate = process.cwd();
     while (candidate.indexOf('\\')!== -1) {
         if (existsSync(`${candidate}\\${name}`)) {
             return candidate;
