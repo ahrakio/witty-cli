@@ -10,13 +10,6 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const WebpackBar = require("webpackbar");
 
-// Clean configurations
-const clean_paths = [path.resolve(__dirname, "../../../witty-project/dist")];
-
-const clean_options = {
-    watch: true
-};
-
 export class ServeCommand extends CommandAbstract {
     constructor() {
         super();
@@ -71,7 +64,7 @@ export class ServeCommand extends CommandAbstract {
             target: "node",
             mode: "development",
             plugins: [
-                new CleanWebpackPlugin(clean_paths, clean_options),
+                new CleanWebpackPlugin(outputPath, { watch: true }),
                 new UglifyJsPlugin(),
                 new webpack.ProgressPlugin((percentage, msg) => {
                     if (percentage === 0) {

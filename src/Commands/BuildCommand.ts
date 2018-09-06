@@ -1,77 +1,86 @@
-import { Command } from 'commander';
-import { CommandAbstract } from './CommandAbstract';
-import * as path from 'path';
-import webpack from 'webpack';
+import { Command } from "commander";
+import * as path from "path";
+import webpack from "webpack";
+import { CommandAbstract } from "./CommandAbstract";
+import { findFile } from "../Common/FileSystem";
 
 // Webpack plugins
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const WebpackBar = require('webpackbar');
-
-
-// Clean configurations
-const clean_paths = [
-    path.resolve(__dirname, '../../../witty-project/dist')
-];
-
-const clean_options = {
-    watch: true
-};
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const WebpackBar = require("webpackbar");
 
 export class BuildCommand extends CommandAbstract {
     constructor() {
         super();
-        
-        this.name = 'build';
-        this.alias = 'b';
-        this.params =  [];
-        this.description = 'Build the project for production';
+
+        this.name = "build";
+        this.alias = "b";
+        this.params = [];
+        this.description = "Build the project for production";
         this.options = [
-            { 
-                name: 'output',
-                char: 'op',
-                params: ['output'],
-                description: 'Set the compiled project destination path. Default is ./dist'
+            {
+                name: "output",
+                char: "op",
+                params: ["output"],
+                description: "Set the compiled project destination path. Default is ./dist"
             }
-        ];  
+        ];
     }
 
-    protected handle(commands: Command[]): void {
-        process.chdir(path.resolve(__dirname, '../..'));
-        let cwd = process.cwd();
+    protected handle(command: Command): void {
+        let cli_path = path.resolve(__dirname, "../..");
+        let proj_path = process.cwd();
 
-        let entryPath = path.resolve(cwd, '../witty-project/index.ts');
-        let outputPath = path.resolve(cwd, '../witty-project', 'dist');
+        if (findFile("witty.json") === null) {
+            console.log("Not in a witty project folder");
+            return;
+        }
 
-        let config = {
+        let entryPath = path.resolve(proj_path, "index.ts");
+        let outputPath = path.resolve(proj_path, "dist");
+
+        if (command.output !== undefined) {
+            outputPath = path.resolve(proj_path, command.output);
+        }
+
+        process.chdir(cli_path);
+
+        let config = this.prepareConfig(entryPath, outputPath);
+        this.compile(config);
+    }
+
+    private prepareConfig(entryPath, outputPath) {
+        return {
             entry: entryPath,
             module: {
                 rules: [
                     {
                         test: /\.ts$/,
-                        use: 'ts-loader',
+                        use: "ts-loader",
                         exclude: /node_modules/
                     }
                 ]
             },
             resolve: {
-                extensions: ['.ts', '.js']
+                extensions: [".ts", ".js"]
             },
             output: {
-                filename: 'index.js',
-                path: outputPath,
+                filename: "index.js",
+                path: outputPath
             },
-            target: 'node',
-            mode: 'production',
+            target: "node",
+            mode: "production",
             plugins: [
-                new CleanWebpackPlugin(clean_paths, clean_options),
+                new CleanWebpackPlugin(outputPath, { watch: true }),
                 new UglifyJsPlugin(),
                 new WebpackBar({
-                    name: 'Witty'
+                    name: "Witty"
                 })
             ]
         };
+    }
 
+    private compile(config) {
         const compiler = webpack(config);
         compiler.run((a, stats) => {
             const info = stats.toJson();
@@ -83,12 +92,13 @@ export class BuildCommand extends CommandAbstract {
                 console.warn(info.warnings);
             }
 
-            console.log(stats.toString({
-                colors: true,
-                modules: false,
-                version: false
-            }));
+            console.log(
+                stats.toString({
+                    colors: true,
+                    modules: false,
+                    version: false
+                })
+            );
         });
     }
 }
-
