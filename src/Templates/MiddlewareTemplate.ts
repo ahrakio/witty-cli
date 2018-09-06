@@ -5,6 +5,6 @@ export default class MiddlewareTemplate extends AbstractClassTemplate implements
     constructor() {
         super();
         this.class.extends = "Middleware";
-        this.methods = [{name:'handle', params: [], returns: 'boolean|Promise<boolean>'}];
+        this.methods = [{name:'handle', params: [], returns: 'boolean|Promise<boolean>',default_return:'true'}];
     }
 }

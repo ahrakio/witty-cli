@@ -69,7 +69,7 @@ export class TemplateGenerator {
         let abstract_methods: string[] = template.methods
             .map(method => `\t${method.name}(${method.params
                 .map(param => `param => \`${param.name} :${param.type}`).join(', ')}) : ${method.returns} {\n
-                \t\treturn \/\/ ${method.returns}\n\t}`);
+                \t\treturn ${method.default_return};\n\t}`);
 
         data.write(abstract_methods + (template.class ? '\n}' : '\n'));
         return true;

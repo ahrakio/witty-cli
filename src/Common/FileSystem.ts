@@ -3,7 +3,7 @@ import {sep} from 'path'
 
 export function touchDir(path:string) :void {
     if (existsSync(path)) return;
-    let dirNames:string []  = path.split(sep);
+    let dirNames:string []  = path.split(/[\\\/]/gi);
     let soFar = process.cwd();
     for (let i=0; i< dirNames.length; ++i) {
         let dirName : string = dirNames[i];
