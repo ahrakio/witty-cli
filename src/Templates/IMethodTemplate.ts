@@ -6,4 +6,5 @@ export interface IMethodTemplate {
     params:  IParamTemplate[];
     method_decorators?: IDecoratorTemplates[];
     returns: string;
+    default_return: string;
 }

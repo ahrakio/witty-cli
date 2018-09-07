@@ -8,7 +8,7 @@ export class AppTemplate extends AbstractClassTemplate implements IFileTemplate 
         this.class.extends = "AppAbstract";
         this.class.class_decorators = [
                 { name: 'WittyApp',
-                    params: JSON.stringify({controllers: [], middlewares: []},null, "\t")
+                    params: JSON.stringify({controllers: [], middlewares: []},null, "\t").replace(/["']/gi, "")
                 }];
     }
 }
