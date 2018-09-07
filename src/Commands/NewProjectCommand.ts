@@ -46,7 +46,7 @@ export class NewProjectCommand extends CommandAbstract {
                     let tsconfig = {
                         "compilerOptions": {
                             "target": "es6", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-                            "module": "esnext", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+                            "module": "commonjs", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
                             "declaration": false, /* Generates corresponding '.d.ts' file. */
                             "strict": true, /* Enable all strict type-checking options. */
                             "noImplicitAny": false, /* Raise error on expressions and declarations with an implied 'any' type. */

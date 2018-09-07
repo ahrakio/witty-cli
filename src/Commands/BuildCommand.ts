@@ -70,9 +70,17 @@ export class BuildCommand extends CommandAbstract {
             },
             target: "node",
             mode: "production",
+            optimization: {
+                minimizer: [
+                    new UglifyJsPlugin({
+                        uglifyOptions: {
+                            keep_classnames: true
+                        }
+                    })
+                ]
+            },
             plugins: [
                 new CleanWebpackPlugin(outputPath, { watch: true }),
-                new UglifyJsPlugin(),
                 new WebpackBar({
                     name: "Witty"
                 })
