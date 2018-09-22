@@ -1,3 +1,5 @@
+const webpack = require("webpack");
+
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 var nodeExternals = require("webpack-node-externals");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
@@ -47,6 +49,7 @@ module.exports = {
         new DeclarationFilesPlugin({
             merge: true,
             include: ["CommandAbstract", "IOption"]
-        })
+        }),
+        new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
     ]
 };
