@@ -1,5 +1,5 @@
 {
-    "name": "witty_cli",
+    "name": "@ahrakio/witty-cli",
     "version": "1.0.0",
     "description": "",
     "main": "cli.js",
