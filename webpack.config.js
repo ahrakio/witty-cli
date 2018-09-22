@@ -3,10 +3,10 @@ var nodeExternals = require("webpack-node-externals");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const path = require("path");
 const WebpackBar = require("webpackbar");
-// const DeclarationFilesPlugin = require("./declaration");
+const DeclarationFilesPlugin = require("@ahrakio/witty-webpack-declaration-files");
 
 // Clean configurations
-const clean_paths = ["compiled"];
+const clean_paths = ["dist"];
 
 const clean_options = {
     watch: true
@@ -32,7 +32,7 @@ module.exports = {
     },
     output: {
         filename: "bundle.js",
-        path: path.resolve(__dirname, "compiled"),
+        path: path.resolve(__dirname, "dist"),
         libraryTarget: "commonjs",
         library: "bundle"
     },
@@ -43,10 +43,10 @@ module.exports = {
         new UglifyJsPlugin(),
         new WebpackBar({
             name: "Witty"
+        }),
+        new DeclarationFilesPlugin({
+            merge: true,
+            include: ["CommandAbstract", "IOption"]
         })
-        // new DeclarationFilesPlugin({
-        //     merge: true,
-        //     include: ["CommandAbstract", "IOption"]
-        // })
     ]
 };
