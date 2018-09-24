@@ -20,12 +20,15 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                use: "ts-loader",
-                exclude: /node_modules/
+                use: "ts-loader"
             }
         ]
     },
-    externals: [nodeExternals()],
+    externals: [
+        nodeExternals({
+            modulesFromFile: true
+        })
+    ],
     optimization: {
         minimize: false
     },
@@ -39,17 +42,21 @@ module.exports = {
         library: "bundle"
     },
     target: "node",
+    node: {
+        __dirname: false,
+        __filename: false
+    },
     mode: "production",
     plugins: [
         new CleanWebpackPlugin(clean_paths, clean_options),
-        new UglifyJsPlugin(),
+        // new UglifyJsPlugin(),
         new WebpackBar({
             name: "Witty"
         }),
         new DeclarationFilesPlugin({
             merge: true,
             include: ["CommandAbstract", "IOption"]
-        }),
-        new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
+        })
+        // new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
     ]
 };

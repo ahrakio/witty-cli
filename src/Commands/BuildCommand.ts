@@ -28,7 +28,7 @@ export class BuildCommand extends CommandAbstract {
     }
 
     protected handle(command: Command): void {
-        let cli_path = path.resolve(__dirname, "../..");
+        let cli_path = path.resolve(__dirname);
         let proj_path = process.cwd();
 
         if (findFile("witty.json") === null) {
