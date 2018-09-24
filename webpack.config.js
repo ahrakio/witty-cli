@@ -57,6 +57,6 @@ module.exports = {
             merge: true,
             include: ["CommandAbstract", "IOption"]
         })
-        // new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
+        new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
     ]
 };
