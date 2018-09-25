@@ -25,7 +25,7 @@ export class NewProjectCommand extends CommandAbstract {
         let init_outpot = execSync('npm init -y', {encoding:'ascii'});
         console.log(init_outpot);
         console.log('start install npm witty dependencies');
-        let install_outpot = execSync('npm install ahrakio', {encoding:'ascii'});
+        let install_outpot = execSync('npm install @ahrakio/witty-core', {encoding:'ascii'});
         console.log(install_outpot);
 
         let witty_obj = {

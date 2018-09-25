@@ -1,6 +1,6 @@
 {
     "name": "@ahrakio/witty-cli",
-    "version": "1.0.7",
+    "version": "1.0.15",
     "description": "",
     "main": "dist/bundle.js",
     "types": "dist/index.d.ts",

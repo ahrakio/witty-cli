@@ -15,7 +15,7 @@ const clean_options = {
 };
 
 module.exports = {
-    entry: "./src/cli.ts",
+    entry: "./src/index.ts",
     module: {
         rules: [
             {
@@ -56,7 +56,7 @@ module.exports = {
         new DeclarationFilesPlugin({
             merge: true,
             include: ["CommandAbstract", "IOption"]
-        })
+        }),
         new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true })
     ]
 };

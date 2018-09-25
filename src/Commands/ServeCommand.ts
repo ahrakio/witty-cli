@@ -32,6 +32,9 @@ export class ServeCommand extends CommandAbstract {
         let cli_path = path.resolve(__dirname, "..");
         let proj_path = process.cwd();
 
+        console.log(cli_path);
+        console.log(proj_path);
+
         if (findFile("witty.json") === null) {
             console.log("Not in a witty project folder");
             return;
@@ -39,7 +42,7 @@ export class ServeCommand extends CommandAbstract {
 
         let child: any = null;
         let entryPath = path.resolve(proj_path, "index.ts");
-        let outputPath = path.resolve(cli_path, "serve");
+        let outputPath = path.resolve(proj_path, "serve");
 
         process.chdir(cli_path);
 
@@ -62,6 +65,10 @@ export class ServeCommand extends CommandAbstract {
                 path: outputPath
             },
             target: "node",
+            node: {
+                __dirname: false,
+                __filename: false
+            },
             mode: "development",
             plugins: [
                 new CleanWebpackPlugin(outputPath, { watch: true }),
@@ -92,10 +99,10 @@ export class ServeCommand extends CommandAbstract {
         compiler.watch(
             {
                 aggregateTimeout: 1000,
-                poll: 1000,
-                ignored: ["node_modules"]
+                poll: 1000
             },
             (a, stats) => {
+                console.log(a, stats);
                 const info = stats.toJson();
                 if (stats.hasErrors()) {
                     console.error(info.errors);
