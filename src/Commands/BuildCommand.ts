@@ -70,9 +70,13 @@ export class BuildCommand extends CommandAbstract {
             },
             target: "node",
             mode: "production",
+            devtool: "source-map",
             optimization: {
                 minimizer: [
                     new UglifyJsPlugin({
+                        cache: true,
+                        parallel: true,
+                        sourceMap: true,
                         uglifyOptions: {
                             keep_classnames: true
                         }
