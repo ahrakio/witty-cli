@@ -54,11 +54,21 @@ export class ServeCommand extends CommandAbstract {
                         test: /\.ts$/,
                         use: "ts-loader",
                         exclude: /node_modules/
+                    },
+                    {
+                        type: "javascript/auto",
+                        test: /\.json$/,
+                        use: [
+                            {
+                                loader: "file-loader",
+                                options: { name: "[name].[ext]" }
+                            }
+                        ]
                     }
                 ]
             },
             resolve: {
-                extensions: [".ts", ".js"]
+                extensions: [".ts", ".js", ".json"]
             },
             output: {
                 filename: "index.js",
@@ -80,13 +90,17 @@ export class ServeCommand extends CommandAbstract {
                             child = null;
                         }
                     } else if (percentage === 1) {
+                        let options = {
+                            cwd: outputPath
+                        };
+
                         let args: string[] = [outputPath + "/index.js"];
 
                         if (command.port !== undefined) {
                             args.push(command.port);
                         }
 
-                        child = spawn("node", args);
+                        child = spawn("node", args, options);
                     }
                 }),
                 new WebpackBar({
