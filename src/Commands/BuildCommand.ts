@@ -58,11 +58,21 @@ export class BuildCommand extends CommandAbstract {
                         test: /\.ts$/,
                         use: "ts-loader",
                         exclude: /node_modules/
+                    },
+                    {
+                        type: "javascript/auto",
+                        test: /\.json$/,
+                        use: [
+                            {
+                                loader: "file-loader",
+                                options: { name: "[name].[ext]" }
+                            }
+                        ]
                     }
                 ]
             },
             resolve: {
-                extensions: [".ts", ".js"]
+                extensions: [".ts", ".js", ".json"]
             },
             output: {
                 filename: "index.js",
