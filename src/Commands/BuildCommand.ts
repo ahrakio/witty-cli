@@ -68,6 +68,11 @@ export class BuildCommand extends CommandAbstract {
                                 options: { name: "[name].[ext]" }
                             }
                         ]
+                    },
+                    {
+                        test: /\.js$/,
+                        use: ["source-map-loader"],
+                        enforce: "pre"
                     }
                 ]
             },
@@ -76,7 +81,8 @@ export class BuildCommand extends CommandAbstract {
             },
             output: {
                 filename: "index.js",
-                path: outputPath
+                path: outputPath,
+                devtoolModuleFilenameTemplate: '[absolute-resource-path]'
             },
             target: "node",
             mode: "production",
