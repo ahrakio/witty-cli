@@ -6,6 +6,7 @@ export class IndexTemplate extends AbstractRunFileTemplate implements IFileTempl
         super();
         this.global_code =
             "import \"./app/http/routes/api\";\n" +
+            "import \"./structure.json\";\n" +
             "import { App } from \"./App\";\n\n" +
             "let app = new App();\n\n" +
             "app.bootstrap();"

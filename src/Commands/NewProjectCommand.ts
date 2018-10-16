@@ -36,6 +36,19 @@ export class NewProjectCommand extends CommandAbstract {
             },
             "metadata": {}
         };
+
+        let structure_obj = {
+                "connections": [
+                    {
+                        "name": "",
+                        "protocol": "HTTP",
+                        "host": "127.0.0.1",
+                        "port": 8400
+                    }
+                ],
+                "microservices": []
+            };
+
         let generator = new TemplateGenerator();
         console.log('start create project files.');
         if (generator.writeTSFileFromTemplate(witty_obj.defaultPaths.app, "App", new AppTemplate())) {
@@ -62,6 +75,11 @@ export class NewProjectCommand extends CommandAbstract {
                     if (writeJsonFile(witty_obj, './witty.json')) {
                         if (writeJsonFile(tsconfig, './tsconfig.json')) {
                             console.log('project '+ name + ' created successfully.');
+                            if (writeJsonFile(structure_obj, './structure.json')) {
+                                console.log('project '+ name + ' created successfully.');
+                            } else {
+                                console.log("failed to create tsconfig.json");
+                            }
                         } else {
                             console.log("failed to create tsconfig.json");
                         }
