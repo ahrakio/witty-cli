@@ -9,6 +9,8 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const WebpackBar = require("webpackbar");
 
+let project_path;
+
 export class BuildCommand extends CommandAbstract {
     constructor() {
         super();
@@ -23,6 +25,12 @@ export class BuildCommand extends CommandAbstract {
                 char: "op",
                 params: ["output"],
                 description: "Set the compiled project destination path. Default is ./dist"
+            },
+            {
+                name: "dev",
+                char: "dev",
+                params: [],
+                description: "Set the compiled project to be in dev mode"
             }
         ];
     }
@@ -36,22 +44,27 @@ export class BuildCommand extends CommandAbstract {
             return;
         }
 
-        let entryPath = path.resolve(proj_path, "index.ts");
         let outputPath = path.resolve(proj_path, "dist");
+        let mode = "production";
 
+        // Change directory of output
         if (command.output !== undefined) {
             outputPath = path.resolve(proj_path, command.output);
         }
 
+        if (command.dev !== undefined) {
+            mode = "development";
+        }
+
         process.chdir(cli_path);
 
-        let config = this.prepareConfig(entryPath, outputPath);
+        let config = this.prepareConfig(proj_path, outputPath, mode);
         this.compile(config);
     }
 
-    private prepareConfig(entryPath, outputPath) {
-        return {
-            entry: entryPath,
+    private prepareConfig(projPath, outputPath, mode = "production") {
+        let config: any = {
+            entry: path.resolve(projPath, "index.ts"),
             module: {
                 rules: [
                     {
@@ -68,11 +81,6 @@ export class BuildCommand extends CommandAbstract {
                                 options: { name: "[name].[ext]" }
                             }
                         ]
-                    },
-                    {
-                        test: /\.js$/,
-                        use: ["source-map-loader"],
-                        enforce: "pre"
                     }
                 ]
             },
@@ -82,11 +90,20 @@ export class BuildCommand extends CommandAbstract {
             output: {
                 filename: "index.js",
                 path: outputPath,
-                devtoolModuleFilenameTemplate: '[absolute-resource-path]'
+                devtoolModuleFilenameTemplate: (info) => {
+                    let regex = /.*(witty-router|witty-core)(.*)/g;
+                    let match = regex.exec(info.absoluteResourcePath);
+                    let concat = "node_modules/@ahrakio/";
+                    if (match === null) {
+                        return info.absoluteResourcePath;
+                    }
+
+                    return path.join(projPath, concat, match[1], match[2]);
+                }
             },
             target: "node",
-            mode: "production",
-            devtool: "source-map",
+            mode: mode,
+            devtool: mode === "production" ? false : "source-map",
             optimization: {
                 minimizer: [
                     new UglifyJsPlugin({
@@ -98,6 +115,7 @@ export class BuildCommand extends CommandAbstract {
                         }
                     })
                 ]
+                // minimize: false
             },
             plugins: [
                 new CleanWebpackPlugin(outputPath, { watch: true }),
@@ -106,6 +124,16 @@ export class BuildCommand extends CommandAbstract {
                 })
             ]
         };
+
+        if (mode === "development") {
+            config.module.rules.push({
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+            });
+        }
+
+        return config;
     }
 
     private compile(config) {
